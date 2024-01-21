@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'checkstyle'
+    id 'pmd' // Add this line to include the PMD plugin
+}
+
+repositories {
+    mavenCentral()
+}
+
+checkstyle {
+  ignoreFailures = true
+}
+
+compileJava {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'ui.MancalaGUI' // Replace with your actual main class
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    archiveBaseName = 'MancalaGame' // Change the base name of your jar file if needed
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+pmd {
+    toolVersion = "6.55.0"
+    ignoreFailures = true
+    ruleSets = ["category/java/errorprone.xml", "category/java/bestpractices.xml", "category/java/design.xml", "category/java/codestyle.xml"]
+    pmdMain {
+        excludes = [
+                '**/TextUI.java',
+                '**/test/**' 
+        ]
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
